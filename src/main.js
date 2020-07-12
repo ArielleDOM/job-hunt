@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 
-import HelloWorldScene from './scenes/HelloWorldScene'
+import TitleScreen from './scenes/TitleScreen'
 
 const config = {
 	type: Phaser.AUTO,
@@ -12,7 +12,10 @@ const config = {
 			gravity: { y: 200 }
 		}
 	},
-	scene: [HelloWorldScene]
+	render: {
+		pixelArt: true,
+	},
+	scene: [TitleScreen]
 }
 
 export default new Phaser.Game(config)
