@@ -6,7 +6,7 @@ export default class TitleScreen extends Phaser.Scene
 {
 	constructor()
 	{
-		super('hello-world')
+		super('titleScreen')
 	}
 
 	preload()
@@ -15,17 +15,19 @@ export default class TitleScreen extends Phaser.Scene
         this.load.addFile(fonts)
         this.load.spritesheet('bg', 'assets/TitleScreen/intro-bg.jpg', {frameWidth: 800, frameHeight: 600})
         this.load.image('logo', 'assets/TitleScreen/logo.png')
-        this.load.audio('titleMusic', 'assets/TitleScreen/Kreuzberg_Nights.mp3')
+        this.load.audio('titleMusic', 'assets/TitleScreen/Lands_Unknown.mp3')
     }
 
     create(){
         this.createTitle()
+        this.scene.start('level1')
     }
 
     createTitle(){
 
         this.background = this.add.sprite(400, 400, 'bg') 
         this.logo = this.add.image(400, 200, 'logo')
+        this.cursors = this.input.keyboard.createCursorKeys()
 
         this.music = this.sound.add('titleMusic')
 
@@ -47,6 +49,13 @@ export default class TitleScreen extends Phaser.Scene
 
         this.logo.setScale(3.5)
         this.background.anims.play('intro-bg')
-        this.music.play()
+        // this.music.play() FIX ME
+    }
+
+    update(){
+        if (this.cursors.space.isDown){
+            this.scene.start('level1')
+            this.music.stop()
+        }
     }
 }

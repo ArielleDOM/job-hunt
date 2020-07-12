@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 
 import TitleScreen from './scenes/TitleScreen'
+import Level1 from './scenes/Level1'
 
 const config = {
 	type: Phaser.AUTO,
@@ -15,7 +16,9 @@ const config = {
 	render: {
 		pixelArt: true,
 	},
-	scene: [TitleScreen]
+	scene: [TitleScreen, Level1]
 }
 
-export default new Phaser.Game(config)
+const game = new Phaser.Game(config)
+
+export default game
