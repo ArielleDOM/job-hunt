@@ -20,9 +20,9 @@ export default class Level1 extends Phaser.Scene
     }
 
     createLevel(){
-        // const playTextStyle = {
-        //     fontFamily: '"Press Start 2P"'
-        // }
+        const playTextStyle = {
+            fontFamily: '"Press Start 2P"'
+        }
 
         this.music = this.sound.add('level1Music')
 
@@ -31,34 +31,43 @@ export default class Level1 extends Phaser.Scene
         
         this.cursors = this.input.keyboard.createCursorKeys()
 
+        this.bg_2 = this.add.tileSprite(0, 0, width, height, "citySky").setOrigin(0, 0).setScrollFactor(0)
         this.bg_1 = this.add.tileSprite(0, 0, width, height, "bg_1").setOrigin(0, 0).setScrollFactor(0)
-        // this.health = this.add.text(20, 20, 'Health: 100', playTextStyle)
-
-
-
         
         this.ground = this.physics.add.staticGroup();
         this.ground.create(400, 575, 'ground').setScale(2).refreshBody();
 
-        // this.ground = this.add.tileSprite(0, 0, width, 48, "ground");
-        // this.ground.setOrigin(0, 0);
-        // this.ground.setScrollFactor(0);
-        // this.ground.y = 555;
-        // this.physics.add.existing(this.ground, false)
-        // this.ground.body.setCollideWorldBounds(true)
-        // this.ground.body.immovable = true
-
-
         
         let platforms = this.physics.add.staticGroup()
 
+        
+        platforms.create(120, 250, 'platform');
         platforms.create(400, 400, 'platform');
-        platforms.create(50, 250, 'platform');
-        platforms.create(750, 220, 'platform');
 
-        this.player = this.physics.add.sprite(200,300, 'player').setScale(.75);
+        platforms.create(900, 140, 'platform');
+        platforms.create(900, 300, 'platform');
+        platforms.create(900, 460, 'platform');
+       
+        
+        platforms.create(1425, 360, 'platform');
+        platforms.create(2200, 250, 'platform');
+        platforms.create(3015, 160, 'platform');
+
+        this.player = this.physics.add.sprite(100, 460, 'player').setScale(.75);
 
         this.player.body.setSize(this.player.width, this.player.height, true)
+
+        this.floorCases = this.physics.add.group({
+            key: 'case',
+            repeat: 70,
+            setXY: { x: 12, y: 500, stepX: 70 }
+        });
+
+        this.bonusCases = this.physics.add.group({
+            key: 'bonusCase',
+            repeat: 4,
+            setXY: { x: 2850, y: 0, stepX: 70 }
+        });
 
         
         this.anims.create({
@@ -108,10 +117,19 @@ export default class Level1 extends Phaser.Scene
 
         this.physics.add.collider(this.player, platforms);
         this.physics.add.collider(this.player, this.ground)
+        this.physics.add.collider(this.floorCases, platforms);
+        this.physics.add.collider(this.floorCases, this.ground)
+        this.physics.add.collider(this.bonusCases, platforms);
+        this.physics.add.collider(this.bonusCases, this.ground)
         
-
+        this.initialTime = 5;
+        this.timeText = this.add.text(32, 32, 'TIME: ' + this.initialTime,  playTextStyle).setScrollFactor(0);
+        this.scoreText = this.add.text(32, 64, 'SCORE: 0',  playTextStyle).setScrollFactor(0)
+        this.timedEvent = this.time.addEvent({ delay: 1000, callback: this.onEvent, callbackScope: this, loop: true });
         // this.music.play()
     }
+
+
 
     update(){
 
@@ -122,11 +140,11 @@ export default class Level1 extends Phaser.Scene
         
         if (this.cursors.left.isDown  && this.player.x > 0 && !this.cursors.down.isDown && !keyA.isDown )
         {
-            this.player.setVelocityX(-200);
+            this.player.x -=4;
             this.player.anims.play('left', true);
 
         }else if (this.cursors.right.isDown  && this.player.x < width * 4 && !this.cursors.down.isDown && !keyA.isDown ){
-            this.player.setVelocityX(200);
+            this.player.x +=4;
             this.player.anims.play('right', true);
 
         }else{
@@ -134,7 +152,7 @@ export default class Level1 extends Phaser.Scene
             this.player.anims.play('turn');
         }
 
-        if (this.cursors.up.isDown && this.player.body.touching.down){
+        if ((this.cursors.space.isDown || this.cursors.up.isDown)  && this.player.body.touching.down){
             this.player.setVelocityY(-370);
             this.player.anims.play('jump')
         }
@@ -157,8 +175,33 @@ export default class Level1 extends Phaser.Scene
             this.player.anims.play('jump')
         }
 
-        this.bg_1.tilePositionX = this.myCam.scrollX * 1;
+        this.bg_1.tilePositionX = this.myCam.scrollX * .5;
+        this.bg_2.tilePositionX = this.myCam.scrollX * .3;
     }
 
+    formatTime(seconds){
+        // Minutes
+        var minutes = Math.floor(seconds/60);
+        // Seconds
+        var partInSeconds = seconds%60;
+        // Adds left zeros to seconds
+        partInSeconds = partInSeconds.toString().padStart(2,'0');
+        // Returns formated time
+        return `${minutes}:${partInSeconds}`;
+    }
+
+    onEvent(){
+        this.timeText.setText('TIME: ' + this.initialTime);
+
+        if(this.initialTime === 0){
+            this.add.text(100, 100, 'I am working')
+        }else{
+            this.initialTime -= 1;
+        }
+    }
+
+    collectCase(){
+
+    }
     
 }

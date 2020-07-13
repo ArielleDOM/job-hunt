@@ -17,7 +17,12 @@ export default class Preloader extends Phaser.Scene
         this.load.spritesheet('player','assets/Level1/dude.png', { frameWidth: 68.23529, frameHeight: 76})
         this.load.spritesheet('playerJump', 'assets/Level1/jump.png', { frameWidth: 50.2, frameHeight: 79});
         this.load.spritesheet('punch', 'assets/Level1/punch.png', { frameWidth: 75, frameHeight: 76})
-        this.load.image('ground', 'assets/Level1/groundLong.png')
+		this.load.image('ground', 'assets/Level1/groundLong.png')
+		this.load.image('citySky', 'assets/Level1/citySky.jpg')
+		this.load.image('dumpster', 'assets/Level1/dumpster.png')
+		this.load.image('fire', 'assets/Level1/fire.png')
+		this.load.image('case', 'assets/Level1/case.png')
+		this.load.image('bonusCase', 'assets/Level1/bonusCase.png')
         this.load.image('platform', 'assets/Level1/platform.png')
         this.load.audio('level1Music', 'assets/TitleScreen/Kreuzberg_Nights.mp3')
 	}
