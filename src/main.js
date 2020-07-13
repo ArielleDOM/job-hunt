@@ -2,21 +2,21 @@ import Phaser from 'phaser'
 
 import TitleScreen from './scenes/TitleScreen'
 import Level1 from './scenes/Level1'
+import PreLoader from './scenes/Preloader'
 
 const config = {
-	type: Phaser.AUTO,
+	type: Phaser.CANVAS,
 	width: 800,
 	height: 600,
+	pixelArt: true,
 	physics: {
 		default: 'arcade',
 		arcade: {
-			gravity: { y: 200 }
+			gravity: { y: 400 },
+			debug: true
 		}
 	},
-	render: {
-		pixelArt: true,
-	},
-	scene: [TitleScreen, Level1]
+	scene: [PreLoader, TitleScreen, Level1]
 }
 
 const game = new Phaser.Game(config)

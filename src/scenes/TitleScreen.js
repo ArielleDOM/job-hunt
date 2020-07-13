@@ -13,9 +13,6 @@ export default class TitleScreen extends Phaser.Scene
     {
         const fonts = new WebFontLoader(this.load, 'Press Start 2P')
         this.load.addFile(fonts)
-        this.load.spritesheet('bg', 'assets/TitleScreen/intro-bg.jpg', {frameWidth: 800, frameHeight: 600})
-        this.load.image('logo', 'assets/TitleScreen/logo.png')
-        this.load.audio('titleMusic', 'assets/TitleScreen/Lands_Unknown.mp3')
     }
 
     create(){
