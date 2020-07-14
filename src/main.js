@@ -4,6 +4,11 @@ import TitleScreen from './scenes/TitleScreen'
 import Level1 from './scenes/Level1'
 import Controls from './scenes/Controls'
 import PreLoader from './scenes/Preloader'
+import Ace from './scenes/Ace'
+import Got from './scenes/Got'
+import Dream from './scenes/Dream'
+import Boss from './scenes/Boss'
+import Cheater from './scenes/Cheater'
 
 const config = {
 	type: Phaser.CANVAS,
@@ -17,7 +22,7 @@ const config = {
 			debug: true
 		}
 	},
-	scene: [PreLoader, TitleScreen, Controls, Level1]
+	scene: [PreLoader, TitleScreen, Controls, Level1, Ace, Got, Dream, Boss, Cheater]
 }
 
 const game = new Phaser.Game(config)

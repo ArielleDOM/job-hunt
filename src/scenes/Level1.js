@@ -143,7 +143,7 @@ export default class Level1 extends Phaser.Scene
         this.physics.add.overlap(this.player, this.floorCases, this.collectFloorCases, null, this);
         this.physics.add.overlap(this.player, this.bonusCases, this.collectBonusCases, null, this);
         
-        this.initialTime = 5;
+        this.initialTime = 130;
         this.timeText = this.add.text(32, 32, 'TIME: ' + this.initialTime,  playTextStyle).setScrollFactor(0);
         this.scoreText = this.add.text(32, 64, 'SCORE: 0',  playTextStyle).setScrollFactor(0)
         this.time.addEvent({ delay: 1000, callback: this.onEvent, callbackScope: this, loop: true });
@@ -195,19 +195,49 @@ export default class Level1 extends Phaser.Scene
         this.bg_2.tilePositionX = this.myCam.scrollX * .3;
     }
 
+    showEndings(){
+        if(this.score < 500){
+            this.scene.start('ace')
+        }
+        if(this.score > 500 && this.score < 1000){
+            this.scene.start('got')
+        }
+
+        if(this.score > 1000 && this.score < 2000){
+            this.scene.start('dream')
+        }
+
+        if(this.score > 2000){
+            this.scene.start('boss')
+        }
+
+        if(this.score > 150000){
+            this.scene.start('cheater')
+        }
+    }
+
     onEvent(){
         this.timeText.setText('TIME: ' + this.initialTime);
 
         if(this.initialTime === 0){
-            this.scene.start('titleScreen')
+            this.physics.pause()
             this.music.stop()
+            
+            const gameOverText = this.add.text(200, 250, 'Game Over', {fontSize: '50px', fontFamily: '"Press Start 2P"'}).setScrollFactor(0)
+            gameOverText.setShadow(3, 1, 'rgba(0, 0, 0)', 0)
+            
+            this.time.addEvent({
+                delay: 4000,
+                callback: this.showEndings,
+                callbackScope: this,
+                loop: false
+              });
         }else{
             this.initialTime -= 1;
         }
     }
 
     collectFloorCases(player, cases){
-        
         cases.disableBody(true, true);
         this.score += 10
         this.scoreText.setText('SCORE:' + this.score)
