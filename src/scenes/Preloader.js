@@ -25,7 +25,10 @@ export default class Preloader extends Phaser.Scene
 		this.load.image('barrier', 'assets/Level1/barrier.png')
 		this.load.image('bonusCase', 'assets/Level1/bonusCase.png')
         this.load.image('platform', 'assets/Level1/platform.png')
-        this.load.audio('level1Music', 'assets/TitleScreen/Kreuzberg_Nights.mp3')
+		this.load.audio('level1Music', 'assets/TitleScreen/Kreuzberg_Nights.mp3')
+		this.load.audio('die', 'assets/Level1/die.mp3')
+		this.load.audio('alive', 'assets/Level1/alive.mp3')
+		this.load.audio('collect', 'assets/Level1/collect.mp3')
 	}
 
 	create()

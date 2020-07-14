@@ -24,6 +24,9 @@ export default class Level1 extends Phaser.Scene
         }
 
         this.music = this.sound.add('level1Music')
+        this.dieEffect = this.sound.add('die').setVolume(.7)
+        this.aliveEffect = this.sound.add('alive').setVolume(.5)
+        this.collectEffect = this.sound.add('collect').setVolume(.4)
 
         const width = this.scale.width
         const height = this.scale.height
@@ -57,6 +60,13 @@ export default class Level1 extends Phaser.Scene
         this.platforms.create(2200, 250, 'platform');
         this.platforms.create(3015, 160, 'platform');
 
+
+        this.fires.create(120, 150, 'fire').setScale(.2).setBounce(1).setVelocity(Phaser.Math.Between(-200, 200), 20)
+        this.fires.create(400, 300, 'fire').setScale(.2).setBounce(1).setVelocity(Phaser.Math.Between(-200, 200), 20)
+        this.fires.create(900, 300, 'fire').setScale(.2).setBounce(1).setVelocity(Phaser.Math.Between(-200, 200), 20)
+        this.fires.create(1425, 360, 'fire').setScale(.2).setBounce(1).setVelocity(Phaser.Math.Between(-200, 200), 20)
+        this.fires.create(3015, 160, 'fire').setScale(.2).setBounce(1).setVelocity(Phaser.Math.Between(-200, 200), 20)
+
         this.player = this.physics.add.sprite(100, 460, 'player').setScale(.75);
 
         this.player.body.setSize(this.player.width, this.player.height, true)
@@ -64,7 +74,7 @@ export default class Level1 extends Phaser.Scene
 
         this.floorCases = this.physics.add.group({
             key: 'case',
-            repeat: 4,
+            repeat: 39,
             setXY: { x: 20, y: Math.floor(Math.random() * 500), stepX: 70 }
         });
 
@@ -116,8 +126,6 @@ export default class Level1 extends Phaser.Scene
 
         this.myCam = this.cameras.main;
         this.myCam.setBounds(0, 0, width * 4, height);
-    
-        // making the camera follow the player
         this.myCam.startFollow(this.player);
 
         this.physics.add.collider(this.player, this.platforms);
@@ -129,16 +137,17 @@ export default class Level1 extends Phaser.Scene
         this.physics.add.collider(this.fires, this.platforms);
         this.physics.add.collider(this.fires, this.ground)
         this.physics.add.collider(this.fires, this.barriers)
-        // this.physics.add.collider(this.fires, this.player)
 
-        this.physics.add.overlap(this.player, this.fires, this.hitFire, null, this);
+
+        this.hurt = this.physics.add.overlap(this.player, this.fires, this.hitFire, null, this);
         this.physics.add.overlap(this.player, this.floorCases, this.collectFloorCases, null, this);
+        this.physics.add.overlap(this.player, this.bonusCases, this.collectBonusCases, null, this);
         
-        this.initialTime = 5;
+        this.initialTime = 130;
         this.timeText = this.add.text(32, 32, 'TIME: ' + this.initialTime,  playTextStyle).setScrollFactor(0);
         this.scoreText = this.add.text(32, 64, 'SCORE: 0',  playTextStyle).setScrollFactor(0)
         this.time.addEvent({ delay: 1000, callback: this.onEvent, callbackScope: this, loop: true });
-        // this.music.play()
+        this.music.play()
     }
 
 
@@ -149,13 +158,16 @@ export default class Level1 extends Phaser.Scene
 
         let keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
         
-        if (this.cursors.left.isDown  && this.player.x > 0 && !this.cursors.down.isDown && !keyA.isDown )
+        if (this.cursors.left.isDown  && this.player.x > 0 && !this.cursors.down.isDown && !keyA.isDown)
         {
-            this.player.x -=4;
+            this.player.setVelocityX(-234)
+            // this.player.x -=4;
             this.player.anims.play('left', true);
 
-        }else if (this.cursors.right.isDown  && this.player.x < width * 4 && !this.cursors.down.isDown && !keyA.isDown ){
-            this.player.x +=4;
+        }else if (this.cursors.right.isDown  && this.player.x < width * 4 && !this.cursors.down.isDown && !keyA.isDown){
+            
+            this.player.setVelocityX(234)
+            // this.player.x +=4;
             this.player.anims.play('right', true);
 
         }else{
@@ -206,14 +218,13 @@ export default class Level1 extends Phaser.Scene
         }
     }
 
-    collectFloorCases(player, cases)
-    {
+    collectFloorCases(player, cases){
         
         cases.disableBody(true, true);
         this.score += 10
         this.scoreText.setText('SCORE:' + this.score)
+        this.collectEffect.play()
 
-        console.log(this.score)
 
         if(this.floorCases.countActive(true) === 0){
 
@@ -230,8 +241,26 @@ export default class Level1 extends Phaser.Scene
         }
     }
 
+    collectBonusCases(player, cases){
+        cases.disableBody(true, true);
+        this.score += 100
+        this.scoreText.setText('SCORE:' + this.score)
+        this.collectEffect.play()
+        
+    }
+
+    
+
     hitFire(){
         this.player.disableBody(true, true);
+
+        if(this.hurt.active){
+            this.dieEffect.play()
+        }
+
+        this.hurt.active = false
+        
+        
         if(this.score <= 50){
             this.score = 0
             this.scoreText.setText('SCORE:' + this.score)
@@ -246,24 +275,31 @@ export default class Level1 extends Phaser.Scene
             callbackScope: this,
             loop: false
           });
+
+          this.time.addEvent({ 
+            delay: 2200, 
+            callback: () => {
+                this.player.alpha = 1
+                this.hurt.active = true
+            }, 
+            callbackScope: this, 
+            loop: false 
+        });
     }
 
     resetPlayer(){
-      
-        this.player.enableBody(true, 100, 460, true, true);
-
-        this.player.alpha = 0.5;
+        this.player.enableBody(true, this.player.x, this.player.y, true, true)
+        this.aliveEffect.play();
 
         this.tweens.add({
           targets: this.player,
           ease: 'Power1',
           duration: 1500,
-          repeat:0,
+          repeat:3,
           onComplete: function(){
-            this.player.alpha = 1;
+            this.player.alpha = .7;
           },
           callbackScope: this
         });
-      }
-    
+      }   
 }
