@@ -160,12 +160,12 @@ export default class Level1 extends Phaser.Scene
         
         if (this.cursors.left.isDown  && this.player.x > 0 && !this.cursors.down.isDown && !keyA.isDown)
         {
-            this.player.setVelocityX(-234)
+            this.player.setVelocityX(-235)
             this.player.anims.play('left', true);
 
         }else if (this.cursors.right.isDown  && this.player.x < width * 4 && !this.cursors.down.isDown && !keyA.isDown){
             
-            this.player.setVelocityX(234)
+            this.player.setVelocityX(235)
             this.player.anims.play('right', true);
 
         }else{
@@ -207,7 +207,7 @@ export default class Level1 extends Phaser.Scene
             this.scene.start('dream')
         }
 
-        if(this.score > 1800){
+        if(this.score >= 2000){
             this.scene.start('boss')
         }
 
