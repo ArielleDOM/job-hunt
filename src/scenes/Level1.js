@@ -203,11 +203,11 @@ export default class Level1 extends Phaser.Scene
             this.scene.start('got')
         }
 
-        if(this.score > 1000 && this.score < 2000){
+        if(this.score > 1000 && this.score < 1500){
             this.scene.start('dream')
         }
 
-        if(this.score > 2000){
+        if(this.score > 1800){
             this.scene.start('boss')
         }
 
