@@ -17,7 +17,7 @@ export default class TitleScreen extends Phaser.Scene
 
     create(){
         this.createTitle()
-        this.scene.start('level1')
+        this.scene.start('controls')
     }
 
     createTitle(){
@@ -46,12 +46,12 @@ export default class TitleScreen extends Phaser.Scene
 
         this.logo.setScale(3.5)
         this.background.anims.play('intro-bg')
-        // this.music.play() FIX ME
+        // this.music.play()
     }
 
     update(){
         if (this.cursors.space.isDown){
-            this.scene.start('level1')
+            this.scene.start('controls')
             this.music.stop()
         }
     }

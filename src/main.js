@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 
 import TitleScreen from './scenes/TitleScreen'
 import Level1 from './scenes/Level1'
+import Controls from './scenes/Controls'
 import PreLoader from './scenes/Preloader'
 
 const config = {
@@ -16,7 +17,7 @@ const config = {
 			debug: true
 		}
 	},
-	scene: [PreLoader, TitleScreen, Level1]
+	scene: [PreLoader, TitleScreen, Controls, Level1]
 }
 
 const game = new Phaser.Game(config)

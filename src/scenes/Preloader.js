@@ -29,6 +29,7 @@ export default class Preloader extends Phaser.Scene
 		this.load.audio('die', 'assets/Level1/die.mp3')
 		this.load.audio('alive', 'assets/Level1/alive.mp3')
 		this.load.audio('collect', 'assets/Level1/collect.mp3')
+		this.load.image('controls', 'assets/directions/arrowKeys.png')
 	}
 
 	create()

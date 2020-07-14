@@ -143,7 +143,7 @@ export default class Level1 extends Phaser.Scene
         this.physics.add.overlap(this.player, this.floorCases, this.collectFloorCases, null, this);
         this.physics.add.overlap(this.player, this.bonusCases, this.collectBonusCases, null, this);
         
-        this.initialTime = 130;
+        this.initialTime = 5;
         this.timeText = this.add.text(32, 32, 'TIME: ' + this.initialTime,  playTextStyle).setScrollFactor(0);
         this.scoreText = this.add.text(32, 64, 'SCORE: 0',  playTextStyle).setScrollFactor(0)
         this.time.addEvent({ delay: 1000, callback: this.onEvent, callbackScope: this, loop: true });
@@ -161,13 +161,11 @@ export default class Level1 extends Phaser.Scene
         if (this.cursors.left.isDown  && this.player.x > 0 && !this.cursors.down.isDown && !keyA.isDown)
         {
             this.player.setVelocityX(-234)
-            // this.player.x -=4;
             this.player.anims.play('left', true);
 
         }else if (this.cursors.right.isDown  && this.player.x < width * 4 && !this.cursors.down.isDown && !keyA.isDown){
             
             this.player.setVelocityX(234)
-            // this.player.x +=4;
             this.player.anims.play('right', true);
 
         }else{
@@ -197,22 +195,12 @@ export default class Level1 extends Phaser.Scene
         this.bg_2.tilePositionX = this.myCam.scrollX * .3;
     }
 
-    formatTime(seconds){
-        // Minutes
-        var minutes = Math.floor(seconds/60);
-        // Seconds
-        var partInSeconds = seconds%60;
-        // Adds left zeros to seconds
-        partInSeconds = partInSeconds.toString().padStart(2,'0');
-        // Returns formated time
-        return `${minutes}:${partInSeconds}`;
-    }
-
     onEvent(){
         this.timeText.setText('TIME: ' + this.initialTime);
 
         if(this.initialTime === 0){
-            console.log('hello')
+            this.scene.start('titleScreen')
+            this.music.stop()
         }else{
             this.initialTime -= 1;
         }
@@ -227,7 +215,6 @@ export default class Level1 extends Phaser.Scene
 
 
         if(this.floorCases.countActive(true) === 0){
-
 
             this.floorCases.children.iterate(function(child){
                 child.enableBody(true, child.x , Math.floor(Math.random() * 500), true, true)
@@ -248,8 +235,6 @@ export default class Level1 extends Phaser.Scene
         this.collectEffect.play()
         
     }
-
-    
 
     hitFire(){
         this.player.disableBody(true, true);
