@@ -1,6 +1,5 @@
 import Phaser from 'phaser'
 import WebFontLoader from './WebFont'
-import game from '../main'
 
 export default class Level1 extends Phaser.Scene
 {
@@ -28,6 +27,7 @@ export default class Level1 extends Phaser.Scene
 
         const width = this.scale.width
         const height = this.scale.height
+        this.score = 0
         
         this.cursors = this.input.keyboard.createCursorKeys()
 
@@ -37,30 +37,35 @@ export default class Level1 extends Phaser.Scene
         this.ground = this.physics.add.staticGroup();
         this.ground.create(400, 575, 'ground').setScale(2).refreshBody();
 
-        
-        let platforms = this.physics.add.staticGroup()
+        this.fires = this.physics.add.group()
+        this.platforms = this.physics.add.staticGroup()
+        this.barriers = this.physics.add.staticGroup()
 
-        
-        platforms.create(120, 250, 'platform');
-        platforms.create(400, 400, 'platform');
+        this.barriers.create(-20, 250, 'barrier')
+        this.barriers.create(3250, 250, 'barrier')
 
-        platforms.create(900, 140, 'platform');
-        platforms.create(900, 300, 'platform');
-        platforms.create(900, 460, 'platform');
+
+        this.platforms.create(120, 250, 'platform');
+        this.platforms.create(400, 400, 'platform');
+
+        this.platforms.create(900, 140, 'platform');
+        this.platforms.create(900, 300, 'platform');
+        this.platforms.create(900, 460, 'platform');
        
         
-        platforms.create(1425, 360, 'platform');
-        platforms.create(2200, 250, 'platform');
-        platforms.create(3015, 160, 'platform');
+        this.platforms.create(1425, 360, 'platform');
+        this.platforms.create(2200, 250, 'platform');
+        this.platforms.create(3015, 160, 'platform');
 
         this.player = this.physics.add.sprite(100, 460, 'player').setScale(.75);
 
         this.player.body.setSize(this.player.width, this.player.height, true)
+        this.player.tint= 0xff0000
 
         this.floorCases = this.physics.add.group({
             key: 'case',
-            repeat: 70,
-            setXY: { x: 12, y: 500, stepX: 70 }
+            repeat: 4,
+            setXY: { x: 20, y: Math.floor(Math.random() * 500), stepX: 70 }
         });
 
         this.bonusCases = this.physics.add.group({
@@ -115,17 +120,24 @@ export default class Level1 extends Phaser.Scene
         // making the camera follow the player
         this.myCam.startFollow(this.player);
 
-        this.physics.add.collider(this.player, platforms);
+        this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.player, this.ground)
-        this.physics.add.collider(this.floorCases, platforms);
+        this.physics.add.collider(this.floorCases, this.platforms);
         this.physics.add.collider(this.floorCases, this.ground)
-        this.physics.add.collider(this.bonusCases, platforms);
+        this.physics.add.collider(this.bonusCases, this.platforms);
         this.physics.add.collider(this.bonusCases, this.ground)
+        this.physics.add.collider(this.fires, this.platforms);
+        this.physics.add.collider(this.fires, this.ground)
+        this.physics.add.collider(this.fires, this.barriers)
+        // this.physics.add.collider(this.fires, this.player)
+
+        this.physics.add.overlap(this.player, this.fires, this.hitFire, null, this);
+        this.physics.add.overlap(this.player, this.floorCases, this.collectFloorCases, null, this);
         
         this.initialTime = 5;
         this.timeText = this.add.text(32, 32, 'TIME: ' + this.initialTime,  playTextStyle).setScrollFactor(0);
         this.scoreText = this.add.text(32, 64, 'SCORE: 0',  playTextStyle).setScrollFactor(0)
-        this.timedEvent = this.time.addEvent({ delay: 1000, callback: this.onEvent, callbackScope: this, loop: true });
+        this.time.addEvent({ delay: 1000, callback: this.onEvent, callbackScope: this, loop: true });
         // this.music.play()
     }
 
@@ -134,7 +146,6 @@ export default class Level1 extends Phaser.Scene
     update(){
 
         const width = this.scale.width
-        const height = this.scale.height
 
         let keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
         
@@ -160,11 +171,6 @@ export default class Level1 extends Phaser.Scene
         if (this.cursors.down.isDown){
             this.player.setVelocityY(330);
         }
-
-        // if (this.cursors.down.isDown && this.player.body.touching.down){
-        //     this.player.setVelocityY(330);
-        //     this.player.anims.play('hurt')
-        // }
 
         if (keyA.isDown && this.player.body.touching.down ){
             this.player.setVelocityX(0);
@@ -194,14 +200,70 @@ export default class Level1 extends Phaser.Scene
         this.timeText.setText('TIME: ' + this.initialTime);
 
         if(this.initialTime === 0){
-            this.add.text(100, 100, 'I am working')
+            console.log('hello')
         }else{
             this.initialTime -= 1;
         }
     }
 
-    collectCase(){
+    collectFloorCases(player, cases)
+    {
+        
+        cases.disableBody(true, true);
+        this.score += 10
+        this.scoreText.setText('SCORE:' + this.score)
 
+        console.log(this.score)
+
+        if(this.floorCases.countActive(true) === 0){
+
+
+            this.floorCases.children.iterate(function(child){
+                child.enableBody(true, child.x , Math.floor(Math.random() * 500), true, true)
+            })
+
+            var x = (player.x < 1200) ? Phaser.Math.Between(0, 1200) : Phaser.Math.Between(1200, 2400)
+
+            var fire = this.fires.create(x, 16, 'fire').setScale(.2)
+            fire.setBounce(1)
+            fire.setVelocity(Phaser.Math.Between(-200, 200), 20)
+        }
     }
+
+    hitFire(){
+        this.player.disableBody(true, true);
+        if(this.score <= 50){
+            this.score = 0
+            this.scoreText.setText('SCORE:' + this.score)
+        }else if(this.score > 50){
+            this.score -= 50
+            this.scoreText.setText('SCORE:' + this.score)
+        }
+
+        this.time.addEvent({
+            delay: 1000,
+            callback: this.resetPlayer,
+            callbackScope: this,
+            loop: false
+          });
+    }
+
+    resetPlayer(){
+      
+        this.player.enableBody(true, 100, 460, true, true);
+
+        this.player.alpha = 0.5;
+
+        this.tweens.add({
+          targets: this.player,
+          ease: 'Power1',
+          duration: 1500,
+          repeat:0,
+          onComplete: function(){
+            this.player.alpha = 1;
+          },
+          callbackScope: this
+        });
+      }
     
 }

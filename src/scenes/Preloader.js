@@ -22,6 +22,7 @@ export default class Preloader extends Phaser.Scene
 		this.load.image('dumpster', 'assets/Level1/dumpster.png')
 		this.load.image('fire', 'assets/Level1/fire.png')
 		this.load.image('case', 'assets/Level1/case.png')
+		this.load.image('barrier', 'assets/Level1/barrier.png')
 		this.load.image('bonusCase', 'assets/Level1/bonusCase.png')
         this.load.image('platform', 'assets/Level1/platform.png')
         this.load.audio('level1Music', 'assets/TitleScreen/Kreuzberg_Nights.mp3')
