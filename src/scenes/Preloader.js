@@ -46,6 +46,8 @@ export default class Preloader extends Phaser.Scene
 
 		this.load.spritesheet('cheaterEnding','assets/endings/cheater.png', { frameWidth: 300, frameHeight: 300})
 		this.load.audio('cheaterMusic', 'assets/endings/Searching_For_You.mp3')
+
+		this.load.audio('gameOverMusic', 'assets/endings/Game_Over.mp3')
 	}
 
 	create()
