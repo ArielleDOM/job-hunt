@@ -196,22 +196,22 @@ export default class Level1 extends Phaser.Scene
     }
 
     showEndings(){
-        if(this.score < 500){
+        if(this.score <= 500){
             this.scene.start('ace')
         }
-        if(this.score > 500 && this.score < 1000){
+        if(this.score >= 500 && this.score <= 1000){
             this.scene.start('got')
         }
 
-        if(this.score > 1000 && this.score < 2000){
+        if(this.score >= 1000 && this.score <= 2000){
             this.scene.start('dream')
         }
 
-        if(this.score >= 2000 && this.score < 150000){
+        if(this.score >= 2000 && this.score <= 150000){
             this.scene.start('boss')
         }
 
-        if(this.score > 150000){
+        if(this.score >= 150000){
             this.scene.start('cheater')
         }
     }
