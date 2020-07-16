@@ -24,7 +24,6 @@ export default class Level1 extends Phaser.Scene
         }
 
         this.music = this.sound.add('level1Music')
-        this.gameOverMusic = this.sound.add('gameOverMusic')
         this.dieEffect = this.sound.add('die').setVolume(.7)
         this.aliveEffect = this.sound.add('alive').setVolume(.5)
         this.collectEffect = this.sound.add('collect').setVolume(.4)
@@ -204,7 +203,7 @@ export default class Level1 extends Phaser.Scene
             this.scene.start('got')
         }
 
-        if(this.score > 1000 && this.score < 1500){
+        if(this.score > 1000 && this.score < 2000){
             this.scene.start('dream')
         }
 
@@ -223,8 +222,6 @@ export default class Level1 extends Phaser.Scene
         if(this.initialTime === 0){
             this.physics.pause()
             this.music.stop()
-            // this.gameOverMusic.play()
-            // this.gameOverMusic.stop()
     
             const gameOverText = this.add.text(200, 250, 'Game Over', {fontSize: '50px', fontFamily: '"Press Start 2P"'}).setScrollFactor(0)
             gameOverText.setShadow(3, 1, 'rgba(0, 0, 0)', 0)

@@ -8,7 +8,6 @@ export default class TitleScreen extends Phaser.Scene
 	{
 		super('titleScreen')
 	}
-
 	preload()
     {
         const fonts = new WebFontLoader(this.load, 'Press Start 2P')

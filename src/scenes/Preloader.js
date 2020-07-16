@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import WebFontLoader from './WebFont'
 
 export default class Preloader extends Phaser.Scene
 {
@@ -9,6 +10,9 @@ export default class Preloader extends Phaser.Scene
 
 	preload()
 	{
+		const fonts = new WebFontLoader(this.load, 'Press Start 2P')
+		this.load.addFile(fonts)
+		
         this.load.spritesheet('bg', 'assets/TitleScreen/intro-bg.jpg', {frameWidth: 800, frameHeight: 600})
         this.load.image('logo', 'assets/TitleScreen/logo.png')
 		this.load.audio('titleMusic', 'assets/TitleScreen/Lands_Unknown.mp3')
@@ -22,7 +26,6 @@ export default class Preloader extends Phaser.Scene
         this.load.spritesheet('punch', 'assets/Level1/punch.png', { frameWidth: 75, frameHeight: 76})
 		this.load.image('ground', 'assets/Level1/groundLong.png')
 		this.load.image('citySky', 'assets/Level1/citySky.jpg')
-		this.load.image('dumpster', 'assets/Level1/dumpster.png')
 		this.load.image('fire', 'assets/Level1/fire.png')
 		this.load.image('case', 'assets/Level1/case.png')
 		this.load.image('barrier', 'assets/Level1/barrier.png')
@@ -47,7 +50,68 @@ export default class Preloader extends Phaser.Scene
 		this.load.spritesheet('cheaterEnding','assets/endings/cheater.png', { frameWidth: 300, frameHeight: 300})
 		this.load.audio('cheaterMusic', 'assets/endings/Searching_For_You.mp3')
 
-		this.load.audio('gameOverMusic', 'assets/endings/Game_Over.mp3')
+
+        var progressBar = this.add.graphics();
+        var progressBox = this.add.graphics();
+        progressBox.fillStyle(0x222222, 0.8);
+        progressBox.fillRect(240, 270, 320, 50);
+        
+        var width = this.cameras.main.width;
+        var height = this.cameras.main.height;
+        var loadingText = this.make.text({
+            x: width / 2,
+            y: height / 2 - 50,
+            text: 'LOADING...',
+            style: {
+                fontFamily: '"Press Start 2P"',
+                fill: '#ffffff'
+            }
+        });
+        loadingText.setOrigin(0.5, 0.5);
+        
+        var percentText = this.make.text({
+            x: width / 2,
+            y: height / 2 - 5,
+            text: '0%',
+            style: {
+				fontSize: '10px',
+                fontFamily: '"Press Start 2P"',
+                fill: '#ffffff'
+            }
+        });
+        percentText.setOrigin(0.5, 0.5);
+        
+        var assetText = this.make.text({
+            x: width / 2,
+            y: height / 2 + 50,
+            text: '',
+            style: {
+				fontSize: '10px',
+                fontFamily: '"Press Start 2P"',
+                fill: '#ffffff'
+            }
+        });
+
+        assetText.setOrigin(0.5, 0.5);
+        
+        this.load.on('progress', function (value) {
+            percentText.setText(parseInt(value * 100) + '%');
+            progressBar.clear();
+            progressBar.fillStyle(0xffffff, 1);
+            progressBar.fillRect(250, 280, 300 * value, 30);
+        });
+        
+        this.load.on('fileprogress', function (file) {
+            assetText.setText('LOADING ASSET: ' + file.key);
+        });
+
+        this.load.on('complete', function () {
+            progressBar.destroy();
+            progressBox.destroy();
+            loadingText.destroy();
+            percentText.destroy();
+            assetText.destroy();
+        });
 	}
 
 	create()
